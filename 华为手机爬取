@@ -1,0 +1,40 @@
+# 导入包
+import requests
+import self
+import pandas as pd
+import csv
+import xlwt
+import time
+#打开文件
+f = open('华为手机.csv', 'a', encoding='gbk', newline='')  #csv格式
+csv_writer = csv.writer(f)
+csv_writer.writerow(['用户昵称','评论时间','评论内容'])
+# self.fp = open(f'./华为手机评论.txt','w',encoding='utf-8')  #txt格式
+# 指定url
+for i in range(0,6,1):
+    print("正在爬取第" + str(i) + "页")
+    #构建访问的网址
+    first = 'https://club.jd.com/comment/productPageComments.action?productId=100022634064&score=0&sortType=5&page='
+    last = '&pageSize=10&isShadowSku=0&fold=1'
+    url = first + str(i) + last
+    headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36'
+           }  #身份伪装
+# 设置时间间隔
+    time.sleep(5)
+# 发起请求
+    response = requests.get(url,headers=headers)
+# 将json格式的字符串转换成字典
+    js_data = response.json()
+# 提取数据
+    comment_list = js_data['comments']
+    for comment in comment_list:
+    # 用户昵称
+        nickname = comment.get('nickname')
+    # 评论时间
+        creationTime = comment.get('creationTime')
+    # 评论内容
+        content = comment.get('content')
+        content = content.replace('\n',' ')
+    #存储数据
+        # self.fp.write(f'{nickname}\t{creationTime}\t{content}\n')  #TXT格式
+        csv_writer.writerow([nickname,creationTime,content])  #csv格式
